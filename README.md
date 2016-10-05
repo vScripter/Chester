@@ -1,5 +1,5 @@
 # Chester
-Lightweight, Plugin-based infrastructure testing and remediation using PowerShell and Pester.
+Lightweight, plugin-based infrastructure validation and remediation using PowerShell and Pester.
 
 If you do not see any source code, check the `develop` [branch](https://github.com/vScripter/Chester/tree/develop)!
 
