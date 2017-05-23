@@ -1,5 +1,6 @@
-![](https://github.com/vScripter/Chester/blob/master/Media/chester-logo.png)
-
+<p align="center">
+  <img src="https://github.com/vScripter/Chester/blob/master/Media/chester-logo.png"/>
+</p>
 
 Lightweight, plugin-based infrastructure validation and remediation using PowerShell and Pester.
 
