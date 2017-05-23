@@ -1,4 +1,4 @@
-﻿#Requires -Version 3 -Modules Pester, VMware.VimAutomation.Core
+﻿
 
 function Invoke-Chester {
     <#
@@ -102,7 +102,7 @@ function Invoke-Chester {
 
         #>
 
-        [object[]]$Endpoint,
+        [object[]]$Endpoint = (Get-ChesterEndpoint -ReturnType Object),
 
         # Optionally fix all config drift that is discovered
         # Defaults to false (disabled)
@@ -115,7 +115,9 @@ function Invoke-Chester {
 
         # Optionally returns the Pester result as an object containing the information about the whole test run, and each test
         # Defaults to false (disabled)
-        [switch]$PassThru = $false
+        [switch]$PassThru = $false,
+
+        [switch]$Quiet
 
     )
 
@@ -129,11 +131,13 @@ function Invoke-Chester {
         #>
 
 
+
+
     } #Begin
 
     PROCESS {
 
-        foreach ($endpoint in $EndPoints) {
+        foreach ($ep in $EndPoint) {
 
             <#
 
@@ -145,6 +149,14 @@ function Invoke-Chester {
                 $VesterTests = $Test | Get-VesterTest
 
             #>
+
+
+            # get the endpoint provider
+            $endpointProvider = $null
+            $endpointProvider = $ep.cfg.Provider
+
+
+            <# Original Vester code
 
             ForEach ($ConfigFile in $Config) {
                 # Gracefully handle Get-Item/Get-ChildItem
@@ -161,7 +173,9 @@ function Invoke-Chester {
                     throw "Valid config data not found at path '$ConfigFile'. Exiting"
                 }
 
-                <#  CONNECTIONS
+            #>
+
+            <#  CONNECTIONS
 
                     Need to figure out how to better handle/check connections. If this is to support multiple endpoints,
                     there has to be a way to check for the connection type; not all of them might be vCenter
@@ -171,74 +185,125 @@ function Invoke-Chester {
 
                 #>
 
-                # Check for established session to desired vCenter server
-                If ($cfg.vcenter.vc -notin $global:DefaultVIServers.Name) {
+            # Check for established session to desired vCenter server
+            If ($ep.cfg.vcenter.vc -notin $global:DefaultVIServers.Name) {
 
-                    Try {
-                        # Attempt connection to vCenter; prompts for credentials if needed
-                        Write-Verbose "No active connection found to configured vCenter '$($cfg.vcenter.vc)'. Connecting"
-                        $VIServer = Connect-VIServer -Server $cfg.vcenter.vc -ErrorAction Stop
-                    } Catch {
-                        # If unable to connect, stop
-                        throw "Unable to connect to configured vCenter '$($cfg.vcenter.vc)'. Exiting"
-                    }
+                Try {
+                    # Attempt connection to vCenter; prompts for credentials if needed
+                    Write-Verbose "No active connection found to configured vCenter '$($ep.cfg.vcenter.vc)'. Connecting"
+                    $VIServer = Connect-VIServer -Server $ep.cfg.vcenter.vc -Credential $ep.credential -ErrorAction Stop
+                } Catch {
+                    # If unable to connect, stop
+                    throw "Unable to connect to configured vCenter '$($ep.cfg.vcenter.vc)'. Exiting"
+                }
 
-                } Else {
+            } Else {
 
-                    $VIServer = $global:DefaultVIServers | Where {$_.Name -match $cfg.vcenter.vc}
+                $VIServer = $global:DefaultVIServers | Where-Object {$_.Name -match $ep.cfg.vcenter.vc}
 
-                } # end if/else
+            } # end if/else
 
-                Write-Verbose "Processing against vCenter server '$($cfg.vcenter.vc)'"
+            Write-Verbose "Processing against vCenter server '$($ep.cfg.vcenter.vc)'"
 
-                # Call Invoke-Pester based on the parameters supplied
-                # Runs VesterTemplate.Tests.ps1, which constructs the .Vester.ps1 test files
-                <#
+            # Call Invoke-Pester based on the parameters supplied
+            # Runs VesterTemplate.Tests.ps1, which constructs the .Vester.ps1 test files
+            <#
 
                     - Need to include checking for the Name/Type of the Provider and then pull in the tests from that Provider
                     - Have the Invoke-Pester cmdlet call the 'Init.Tests.ps1' file from the Provider directory
 
                 #>
-                If ($XMLOutputFile) {
+
+            $providerPath = $null
+            $providerPath = "$(Split-Path -Parent $PSScriptRoot)\Providers\$($endpointProvider)"
+
+            If ($XMLOutputFile) {
+
+                if ($Quiet) {
+
+                    Invoke-Pester -OutputFormat NUnitXml -OutputFile $XMLOutputFile -Quiet -Script @{
+                        #Path       = "$(Split-Path -Parent $PSScriptRoot)\Providers\Template\VesterTemplate.Tests.ps1"
+                        Path       = "$providerPath\Init.Tests.ps1"
+                        Parameters = @{
+                            Cfg       = $ep.cfg
+                            TestFiles = Get-VesterTest $providerPath
+                            Remediate = $Remediate
+                        }
+                    } # Invoke-Pester
+
+
+                } else {
 
                     Invoke-Pester -OutputFormat NUnitXml -OutputFile $XMLOutputFile -Script @{
-                        Path       = "$(Split-Path -Parent $PSScriptRoot)\Private\Template\VesterTemplate.Tests.ps1"
-                        #Path      = "$(Split-Path -Parent $PSScriptRoot)\Providers\$($providerName)\Init.Tests.ps1" # example of dynamically picking up proper provider test
+                        #Path       = "$(Split-Path -Parent $PSScriptRoot)\Providers\Template\VesterTemplate.Tests.ps1"
+                        Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
-                            Cfg       = $cfg
-                            TestFiles = $VesterTests
+                            Cfg       = $ep.cfg
+                            TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
 
-                } ElseIf ($PassThru) {
+                } # end if/else
+
+            } ElseIf ($PassThru) {
+
+                if ($Quiet) {
+
+                    Invoke-Pester -PassThru -Quiet -Script @{
+                        Path       = "$providerPath\Init.Tests.ps1"
+                        Parameters = @{
+                            Cfg       = $ep.cfg
+                            TestFiles = Get-VesterTest $providerPath
+                            Remediate = $Remediate
+                        }
+                    } # Invoke-Pester
+
+                } else {
 
                     Invoke-Pester -PassThru -Script @{
-                        Path       = "$(Split-Path -Parent $PSScriptRoot)\Private\Template\VesterTemplate.Tests.ps1"
+                        Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
-                            Cfg       = $cfg
-                            TestFiles = $VesterTests
+                            Cfg       = $ep.cfg
+                            TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
 
-                } Else {
+                } # end if/else
+
+            } Else {
+
+                if ($Quiet) {
+
+                    Invoke-Pester -Qiuet -Script @{
+                        Path       = "$providerPath\Init.Tests.ps1"
+                        Parameters = @{
+                            Cfg       = $ep.cfg
+                            TestFiles = Get-VesterTest $providerPath
+                            Remediate = $Remediate
+                        }
+                    } # Invoke-Pester
+
+                } else {
 
                     Invoke-Pester -Script @{
-                        Path       = "$(Split-Path -Parent $PSScriptRoot)\Private\Template\VesterTemplate.Tests.ps1"
+                        Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
-                            Cfg       = $cfg
-                            TestFiles = $VesterTests
+                            Cfg       = $ep.cfg
+                            TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
 
-                } #If XML
+                } # end if/else
 
-                # In case multiple config files were provided and some aren't valid
-                $cfg = $null
+            } #If XML
 
-            } #ForEach Config
+            # In case multiple config files were provided and some aren't valid
+            #$cfg = $null
+
+            #} #ForEach Config (original vester code)
 
         } # end foreach EndPoint
 
