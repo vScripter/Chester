@@ -146,7 +146,7 @@ function Invoke-Chester {
                 - Need to also handle connections using the credentials specified, somehow...
 
                 # Convert $Test input(s) into a whole bunch of *.Vester.ps1 file paths
-                $VesterTests = $Test | Get-VesterTest
+                $VesterTests = $Test | Get-ChesterTest
 
             #>
 
@@ -226,7 +226,7 @@ function Invoke-Chester {
                         Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
                             Cfg       = $ep.cfg
-                            TestFiles = Get-VesterTest $providerPath
+                            TestFiles = Get-ChesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
@@ -239,7 +239,7 @@ function Invoke-Chester {
                         Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
                             Cfg       = $ep.cfg
-                            TestFiles = Get-VesterTest $providerPath
+                            TestFiles = Get-ChesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
@@ -254,7 +254,7 @@ function Invoke-Chester {
                         Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
                             Cfg       = $ep.cfg
-                            TestFiles = Get-VesterTest $providerPath
+                            TestFiles = Get-ChesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
@@ -265,7 +265,7 @@ function Invoke-Chester {
                         Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
                             Cfg       = $ep.cfg
-                            TestFiles = Get-VesterTest $providerPath
+                            TestFiles = Get-ChesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
@@ -280,7 +280,7 @@ function Invoke-Chester {
                         Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
                             Cfg       = $ep.cfg
-                            TestFiles = Get-VesterTest $providerPath
+                            TestFiles = Get-ChesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
@@ -291,7 +291,7 @@ function Invoke-Chester {
                         Path       = "$providerPath\Init.Tests.ps1"
                         Parameters = @{
                             Cfg       = $ep.cfg
-                            TestFiles = Get-VesterTest $providerPath
+                            TestFiles = Get-ChesterTest $providerPath
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
