@@ -1,4 +1,8 @@
-# Chester
+<p align="center">
+  <img src="https://github.com/vScripter/Chester/blob/master/Media/chester-logo.png"/>
+</p>
+
+
 Lightweight, plugin-based infrastructure validation and remediation using PowerShell and Pester.
 
 If you do not see any source code, check the `develop` [branch](https://github.com/vScripter/Chester/tree/develop)!
