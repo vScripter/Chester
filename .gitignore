@@ -1,0 +1,7 @@
+# repo files and folders
+/_secret
+/Endpoints
+
+# macOS system files
+*.DS_STORE
+
