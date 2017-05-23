@@ -72,7 +72,7 @@ FunctionsToExport = @(
     'Invoke-Chester',
     'Get-ChesterEndpoint',
     'New-ChesterEndpoint',
-    'Get-VesterTest',
+    'Get-ChesterTest',
     'New-VesterConfig')
 
 # Cmdlets to export from this module
