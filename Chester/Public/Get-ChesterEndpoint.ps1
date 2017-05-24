@@ -1,23 +1,61 @@
 
 
 function Get-ChesterEndpoint {
-    [CmdletBinding()]
+
+    [CmdletBinding(DefaultParameterSetName = 'default')]
     param (
-        [Parameter(ValueFromPipeline = $true)]
-        [System.String]$Path = "$Home\.chester",
+
+
+        [Parameter(Position = 0)]
+        [System.String[]]$EndpointName,
+
 
         <# control the type of value returned; use 'Names' as the default value so that when it's
         ran by a user, just a list of Endpoint names is returned. The 'Object' type will be specified
         when calling it internally, or be option by a user to inspect the endpoint configurations #>
-        [ValidateSet('Names', 'Object')]
-        [System.String]$ReturnType = 'Names'
+        [Parameter(Position = 1)]
+        [ValidateSet('Name', 'Object')]
+        [System.String]$ReturnType = 'Object',
+
+
+        [Parameter(Position = 2, ValueFromPipeline = $true)]
+        [ValidateScript( {
+                Test-Path -Path $_ -PathType Container
+            })]
+        [System.String]$Path = "$Home\.chester"
+
     )
 
     BEGIN {
 
-        # gather root Endpoint directories
-        $discoveredEndpoints = $null
-        $discoveredEndpoints = Get-ChildItem -Path $Path -Directory
+        Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing started"
+
+        if ($PSBoundParameters.Keys.Contains('EndpointName')) {
+
+            $epArray = @()
+
+            foreach ($endpointEntry in $EndpointName) {
+
+                Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Looking for Endpoint { $endpointEntry }"
+
+                $fetchEndpoint = $null
+                $fetchEndpoint = Get-ChildItem -Path $Path -Directory | Where-Object {$_.Name -eq $endpointEntry}
+
+                $epArray += $fetchEndpoint
+
+            } # end foreach
+
+            # gather root Endpoint directories
+            $discoveredEndpoints = $null
+            $discoveredEndpoints = $epArray
+
+        } else {
+
+            # gather root Endpoint directories
+            $discoveredEndpoints = $null
+            $discoveredEndpoints = Get-ChildItem -Path $Path -Directory
+
+        } # end if/else
 
         # create empty object to store full endpoint configurations
         [System.Object[]]$endpointConfiguration = $null
@@ -26,50 +64,57 @@ function Get-ChesterEndpoint {
 
     PROCESS {
 
-        if ($ReturnType -eq 'Object') {
+        switch ($ReturnType) {
 
-            ForEach ($endpoint in $discoveredEndpoints) {
+            'Object' {
 
-                if (Test-Path "$($endpoint.FullName)\Config.json") {
+                ForEach ($endpoint in $discoveredEndpoints) {
 
-                # import endpoint configuration
-                $importedConfig = $null
-                $importedConfig = Get-Content -Path (Get-Item "$($endpoint.FullName)\Config.json" -ErrorAction 'SilentlyContinue') -Raw -ErrorAction 'SilentlyContinue'| ConvertFrom-Json -ErrorAction 'SilentlyContinue'
+                    if (Test-Path "$($endpoint.FullName)\Config.json") {
 
-                } else {
+                        # import endpoint configuration
+                        $importedConfig = $null
+                        $importedConfig = Get-Content -Path (Get-Item "$($endpoint.FullName)\Config.json" -ErrorAction 'SilentlyContinue') -Raw -ErrorAction 'SilentlyContinue'| ConvertFrom-Json -ErrorAction 'SilentlyContinue'
 
-                    Write-Warning -Message "Configuration file not found for endpoint { $endpoint } at path { $($endpoint.FullName)\Config.json }"
+                    } else {
 
-                }
+                        Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Configuration file not found for endpoint { $endpoint } at path { $($endpoint.FullName)\Config.json }"
 
-                # gather endpoint authentication
-                $importedAuth = $null
-                $importedAuth = Import-ChesterCredential -Path "$($endpoint.FullName)\Authentication.clixml" -ErrorAction 'SilentlyContinue'
+                    } # end if/else
 
+                    # gather endpoint authentication
+                    $importedAuth = $null
+                    $importedAuth = Import-ChesterCredential -Path "$($endpoint.FullName)\Authentication.clixml" -ErrorAction 'SilentlyContinue'
 
-                # add endpoint configuration to the final endpoint config array
-                $endpointObj = @()
-                $endpointObj = [PSCustomObject] @{
-                    Name       = $endpoint.Name
-                    Cfg        = $importedConfig
-                    Credential = $importedAuth
-                }
+                    # add endpoint configuration to the final endpoint config array
+                    $endpointObj = @()
+                    $endpointObj = [PSCustomObject] @{
+                        Name               = $endpoint.Name
+                        Cfg                = $importedConfig
+                        Credential         = $importedAuth
+                    }
 
-                $endpointConfiguration += $endpointObj
+                    $endpointConfiguration += $endpointObj
 
-            } # end foreach $endpoint
+                } # end foreach $endpoint
 
-        } elseif ($ReturnType -eq 'Names'){
+                $endpointConfiguration
 
-            $discoveredEndpoints.Name
+            } # end 'Object'
 
-        } # if/else $ReturnType
+            'Names' {
+
+                $discoveredEndpoints.Name
+
+            } # end 'Names'
+
+        } # end switch
 
     } # end PROCESS block
 
     END {
 
-        $endpointConfiguration
+        Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing complete"
 
     }
 
