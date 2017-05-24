@@ -9,6 +9,9 @@ function Get-VesterTest {
     )
 
     BEGIN {
+
+        Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing started"
+
         # Construct empty array to throw file paths of tests into
         $TestFiles = New-Object 'System.Collections.Generic.List[String]'
     }
@@ -23,7 +26,7 @@ function Get-VesterTest {
 
             If (Test-Path $TestPath -PathType Container) {
                 # If Test-Path finds a folder, get all *.Vester.ps1 files beneath it
-                Write-Verbose "Discovering *.Vester.ps1 files below directory '$TestPath'."
+                Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Discovering *.Vester.ps1 files below directory '$TestPath'."
                 $GCI = (Get-ChildItem $TestPath -Filter '*.Vester.ps1' -File -Recurse).FullName
 
                 If ($GCI) {
@@ -32,7 +35,7 @@ function Get-VesterTest {
                         $TestFiles.Add($_)
                     }
                 } Else {
-                    throw "No *.Vester.ps1 files found at location '$TestPath'."
+                    throw "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] No *.Vester.ps1 files found at location '$TestPath'."
                 }
 
                 $GCI = $null
@@ -43,7 +46,7 @@ function Get-VesterTest {
                 # Because Vester tests have a very specific format,
                 # and for future discoverability of that test if parent folder is specified,
                 # prefer that tests are consciously named *.Vester.ps1
-                throw "'$TestPath' does not match the *.Vester.ps1 naming convention for test files."
+                throw "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] '$TestPath' does not match the *.Vester.ps1 naming convention for test files."
             } #If Test-Path
 
         } #ForEach -Test param entry
@@ -51,5 +54,7 @@ function Get-VesterTest {
 
     END {
         $TestFiles
+
+        Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing complete"
     }
 } #function
