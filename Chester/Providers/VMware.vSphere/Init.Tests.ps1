@@ -1,11 +1,10 @@
 <#
-This file exists to combine simple user input (Invoke-Vester), simple
+This file exists to combine simple user input (Invoke-Chester), simple
 user test authoring (*.Vester.ps1), and properly scoped inventory objects
 into a single test session that loops through all necessary combinations.
 
 It is called by Invoke-Vester via the Invoke-Pester command.
 
-http://vester.readthedocs.io/en/latest/
 #>
 
 # Accept -WhatIf input from Invoke-Vester
@@ -22,31 +21,34 @@ Param(
     [switch]$Remediate
 )
 
+Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing started"
 
 # Gets the scope, the objects for the scope and their requested test files
-$Scopes        = Split-Path (Split-Path $TestFiles -Parent) -Leaf | Select -Unique
-$Final         = @()
+$Scopes = Split-Path (Split-Path $TestFiles -Parent) -Leaf | Select -Unique
+$Final = @()
 $InventoryList = @()
-$Datacenter    = Get-Datacenter -Name $cfg.scope.datacenter -Server $cfg.vcenter.vc
+$Datacenter = Get-Datacenter -Name $cfg.scope.datacenter -Server $cfg.vcenter.vc
 
+Write-Debug -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][DEBUG] Scopes: { $Scopes }"
 
 # Process .Vester.ps1 files one at a time
 ForEach ($Scope in $Scopes) {
 
-    Write-Verbose "Processing $Scope"
+    Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing Scope { $Scope }"
     Remove-Variable InventoryList -ErrorAction SilentlyContinue # Makes sure the variable is always fresh
     # Use $Scope (parent folder) to get the correct objects to test against
     # If changing values here, update the "$Scope -notmatch" test below as well
     $InventoryList = switch ($Scope) {
-        'vCenter'       {$global:DefaultVIServer | where-object {$_.name -like "$($cfg.vcenter.vc)"}}
-        'Datacenter'    {$Datacenter}
-        'Cluster'       {$Datacenter | Get-Cluster -Name $cfg.scope.cluster}
-        'DSCluster'     {$Datacenter | Get-DatastoreCluster -Name $cfg.scope.dscluster}
-        'Host'          {$Datacenter | Get-Cluster -Name $cfg.scope.cluster | Get-VMHost -Name $cfg.scope.host}
-        'VM'            {$Datacenter | Get-Cluster -Name $cfg.scope.cluster | Get-VM -Name $cfg.scope.vm}
-        'Network'       {$Datacenter | Get-VDSwitch -Name $cfg.scope.vds}
+        'vCenter' {$global:DefaultVIServer | where-object {$_.name -like "$($cfg.vcenter.vc)"}}
+        'Datacenter' {$Datacenter}
+        'Cluster' {$Datacenter | Get-Cluster -Name $cfg.scope.cluster}
+        'DSCluster' {$Datacenter | Get-DatastoreCluster -Name $cfg.scope.dscluster}
+        'Host' {$Datacenter | Get-Cluster -Name $cfg.scope.cluster | Get-VMHost -Name $cfg.scope.host}
+        'VM' {$Datacenter | Get-Cluster -Name $cfg.scope.cluster | Get-VM -Name $cfg.scope.vm}
+        'Network' {$Datacenter | Get-VDSwitch -Name $cfg.scope.vds}
     }
 
+    $ScopeObj = $null
     $ScopeObj = [pscustomobject] @{
         'Scope'         = $Scope
         'InventoryList' = $InventoryList
@@ -55,83 +57,76 @@ ForEach ($Scope in $Scopes) {
     if (($ScopeObj.InventoryList -ne $NULL) -and ($ScopeObj.TestFiles -ne $NULL)) {
         $Final += $ScopeObj
     }
+} # foreach $scope in $scopes
 
-    # Loops through each Scope
-    foreach ($Scope in $Final.Scope) {
-        # Pulling the inventory and test files for this scope
-        $Inventory = ($Final | Where-Object { $_.Scope -eq $Scope }).InventoryList
-        $Tests = ($Final | Where-Object { $_.Scope -eq $Scope }).TestFiles
+# Loops through each Scope
+foreach ($Scope in $Final.Scope) {
 
-        # The parent folder must be one of these names, to help with $Object scoping below
-        # If adding here, also needs to be added to the switch below
-        If ('vCenter|Datacenter|Cluster|DSCluster|Host|VM|Network' -notmatch $Scope) {
-            Write-Warning "Skipping test $TestName. Use -Verbose for more details"
-            Write-Verbose 'Test files should be in a folder with one of the following names:'
-            Write-Verbose 'vCenter / Datacenter / Cluster / DSCluster / Host / VM / Network'
-            Write-Verbose 'This helps Vester determine which inventory object(s) to use during the test.'
-            # Use continue to skip this test and go to the next loop iteration
-            continue
-        }
+    $Inventory = $null
+    $Tests = $null
 
-        # Check for non-core modules only as tests require them
-        # Will need to be revisited as more tests added & more modules required...
-        # ...maybe don't care about this at all and let it fail naturally?
-        If ($Scope -eq 'Network' -and (Get-Module VMware.VimAutomation.Vds) -eq $null) {
-            Try {
-                Import-Module VMware.VimAutomation.Vds -ErrorAction Stop
-            } Catch {
-                Write-Warning 'Failed to import PowerCLI module "VMware.VimAutomation.Vds"'
-                Write-Warning "Skipping network test $TestName"
+    # Pulling the inventory and test files for this scope
+    $Inventory = ($Final | Where-Object { $_.Scope -eq $Scope }).InventoryList
+    $Tests = ($Final | Where-Object { $_.Scope -eq $Scope }).TestFiles
+
+    # The parent folder must be one of these names, to help with $Object scoping below
+    # If adding here, also needs to be added to the switch below
+    If ('vCenter|Datacenter|Cluster|DSCluster|Host|VM|Network' -notmatch $Scope) {
+        Write-Warning "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Skipping test $TestName. Use -Verbose for more details"
+        Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Test files should be in a folder with one of the following names:"
+        Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] vCenter / Datacenter / Cluster / DSCluster / Host / VM / Network"
+        Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] This helps Vester determine which inventory object(s) to use during the test."
+        # Use continue to skip this test and go to the next loop iteration
+        continue
+    }
+
+    # Runs through each test file on the below objects in the current scope
+    foreach ($Test in $Tests) {
+
+        Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing test file $Test"
+        $TestName = $null
+        $TestName = Split-Path $Test -Leaf
+
+        Describe -Name "$Scope Configuration: $TestName" -Fixture {
+            # Pull in $Title/$Description/$Desired/$Type/$Actual/$Fix from the test file
+            . $Test
+
+            # Pump the brakes if the config value is $null
+            If ($Desired -eq $null) {
+                Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Due to null config value, skipping test $TestName"
                 # Use continue to skip this test and go to the next loop iteration
                 continue
             }
-        }
 
-        # Runs through each test file on the below objects in the current scope
-        foreach ($Test in $Tests) {
-            Write-Verbose "Processing test file $Test"
-            $TestName = Split-Path $Test -Leaf
-
-            Describe -Name "$Scope Configuration: $TestName" -Fixture {
-                # Pull in $Title/$Description/$Desired/$Type/$Actual/$Fix from the test file
-                . $Test
-
-                # Pump the brakes if the config value is $null
-                If ($Desired -eq $null) {
-                    Write-Verbose "Due to null config value, skipping test $TestName"
-                    # Use continue to skip this test and go to the next loop iteration
-                    continue
-                }
-
-                # Loops through each object in the inventory list for the specific scope.
-                # It runs one test at a time against each $Object and moves onto the next test.
-                foreach ($Object in $Inventory) {
-                    It -Name "$Scope $($Object.Name) - $Title" -Test {
-                        Try {
-                            # "& $Actual" is running the first script block to compare to $Desired
-                            # The comparison should be empty
-                            # (meaning everything is the same, as expected)
-                            Compare-Object -ReferenceObject $Desired -DifferenceObject (& $Actual -as $Type) |
-                                Should BeNullOrEmpty
-                        } Catch {
-                            # If the comparison found something different,
-                            # Then check if we're going to fix it
-                            If ($Remediate) {
-                                Write-Warning -Message $_
-                                # -WhatIf support wraps the command that would change values
-                                If ($PSCmdlet.ShouldProcess("vCenter '$($cfg.vcenter.vc)' - $Scope '$Object'", "Set '$Title' value to '$Desired'")) {
-                                    Write-Warning -Message "Remediating $Object"
-                                    # Execute the $Fix script block
-                                    & $Fix
-                                }
-                            } Else {
-                                # -Remediate is not active, so just report the error
-                                throw $_
+            # Loops through each object in the inventory list for the specific scope.
+            # It runs one test at a time against each $Object and moves onto the next test.
+            foreach ($Object in $Inventory) {
+                It -Name "$Scope $($Object.Name) - $Title" -Test {
+                    Try {
+                        # "& $Actual" is running the first script block to compare to $Desired
+                        # The comparison should be empty
+                        # (meaning everything is the same, as expected)
+                        Compare-Object -ReferenceObject $Desired -DifferenceObject (& $Actual -as $Type) |
+                            Should BeNullOrEmpty
+                    } Catch {
+                        # If the comparison found something different,
+                        # Then check if we're going to fix it
+                        If ($Remediate) {
+                            Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] $_"
+                            # -WhatIf support wraps the command that would change values
+                            If ($PSCmdlet.ShouldProcess("vCenter '$($cfg.vcenter.vc)' - $Scope '$Object'", "Set '$Title' value to '$Desired'")) {
+                                Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Remediating $Object"
+                                # Execute the $Fix script block
+                                & $Fix
                             }
-                        } #Try/Catch
-                    } #It
-                } #Foreach Inventory
-            } #Describe
-        } #Foreach Tests
-    } #Foreach Final.Scope
-} # foreach $scope in $scopes
+                        } Else {
+                            # -Remediate is not active, so just report the error
+                            throw $_
+                        }
+                    } #Try/Catch
+                } #It
+            } #Foreach Inventory
+        } #Describe
+    } #Foreach Tests
+} #Foreach Final.Scope
+
