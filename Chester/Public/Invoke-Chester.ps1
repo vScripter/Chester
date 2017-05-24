@@ -6,7 +6,7 @@ function Invoke-Chester {
     Test and fix configuration drift in your VMware vSphere environment.
 
     .DESCRIPTION
-    Invoke-Vester will run each test it finds and report on discrepancies.
+    Invoke-Vester will run each test it finds and rendpointort on discrendpointancies.
     It compares actual values against the values you supply in a config file,
     and can fix them immediately if you include the -Remediate parameter.
 
@@ -21,13 +21,13 @@ function Invoke-Chester {
     Using the default config file at \Vester\Configs\Config.json,
     Vester will run all included tests inside of \Vester\Tests\.
     Verbose output will be displayed on the screen.
-    It outputs a report to the host of all passed and failed tests.
+    It outputs a rendpointort to the host of all passed and failed tests.
 
     .EXAMPLE
     Invoke-Vester -Config C:\Tests\Config.json -Test C:\Tests\
     Vester runs all *.Vester.ps1 files found underneath the C:\Tests\ directory,
     and compares values to the config file in the same location.
-    It outputs a report to the host of all passed and failed tests.
+    It outputs a rendpointort to the host of all passed and failed tests.
 
     .EXAMPLE
     $DNS = Get-ChildItem -Path Z:\ -Filter *dns*.Vester.ps1 -File -Recurse
@@ -42,7 +42,7 @@ function Invoke-Chester {
     Run *.Vester.ps1 tests in the .\Tests\VM path below the current location.
     For all tests that fail against the values in \Configs\Config.json,
     -Remediate attempts to immediately fix them to match your defined config.
-    -WhatIf prevents remediation, and instead reports what would have changed.
+    -WhatIf prevents remediation, and instead rendpointorts what would have changed.
 
     .EXAMPLE
     Invoke-Vester -Config .\Config-Dev.json -Remediate
@@ -60,7 +60,7 @@ function Invoke-Chester {
 
     .INPUTS
     [System.Object]
-    Accepts piped input (optional multiple objects) for parameter -Config
+    Accendpointts piped input (optional multiple objects) for parameter -Config
 
     .NOTES
     This command relies on the Pester and PowerCLI modules for testing.
@@ -101,8 +101,8 @@ function Invoke-Chester {
         [object[]]$Test = "$(Split-Path -Parent $PSScriptRoot)\Tests\",
 
         #>
-
-        [object[]]$Endpoint = (Get-ChesterEndpoint -ReturnType Object),
+        [Parameter(ValueFromPipeline = $True)]
+        $Endpoint = (Get-ChesterEndpoint -ReturnType 'Object'),
 
         # Optionally fix all config drift that is discovered
         # Defaults to false (disabled)
@@ -110,8 +110,8 @@ function Invoke-Chester {
 
         # Optionally save Pester output in NUnitXML format to a specified path
         # Specifying a path automatically triggers Pester in NUnitXML mode
-        [ValidateScript( {Test-Path (Split-Path $_ -Parent)})]
-        [object]$XMLOutputFile,
+        [ValidateScript( {Test-Path $_ -PathType Container})]
+        [object]$XMLOutputPath,
 
         # Optionally returns the Pester result as an object containing the information about the whole test run, and each test
         # Defaults to false (disabled)
@@ -123,21 +123,27 @@ function Invoke-Chester {
 
     BEGIN {
 
+        Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing started"
+
+        $resolvedEndpoint = $null
 
         <#
+        if ($PSBoundParameters.Keys.Contains('Endpoint')){
 
-            Gather endpoints -- maybe even validate the each endpoint has a valid config before adding to processing
+            $resolvedEndpoint = Get-ChesterEndpoint -EndpointName $Endpoint -ReturnType 'Object'
 
+        } else {
+
+            $resolvedEndpoint = Get-ChesterEndpoint -ReturnType 'Object'
+
+        } # end if/else
         #>
-
-
-
 
     } #Begin
 
     PROCESS {
 
-        foreach ($ep in $EndPoint) {
+        foreach ($resolvedEndpoint in $endpoint) {
 
             <#
 
@@ -145,35 +151,13 @@ function Invoke-Chester {
                 - for each endpoint, discover proper 'Provider' so that the proper 'Init' tests file can be called (must be part of the config)
                 - Need to also handle connections using the credentials specified, somehow...
 
-                # Convert $Test input(s) into a whole bunch of *.Vester.ps1 file paths
-                $VesterTests = $Test | Get-VesterTest
-
             #>
-
 
             # get the endpoint provider
             $endpointProvider = $null
-            $endpointProvider = $ep.cfg.Provider
+            $endpointProvider = $resolvedEndpoint.cfg.Provider
 
-
-            <# Original Vester code
-
-            ForEach ($ConfigFile in $Config) {
-                # Gracefully handle Get-Item/Get-ChildItem
-                If ($ConfigFile.FullName) {
-                    $ConfigFile = $ConfigFile.FullName
-                }
-                Write-Verbose -Message "Processing Config file $ConfigFile"
-
-                # Load the defined $cfg values to test
-                # -Raw needed for PS v3/v4
-                $cfg = Get-Content $ConfigFile -Raw | ConvertFrom-Json
-
-                If (-not $cfg) {
-                    throw "Valid config data not found at path '$ConfigFile'. Exiting"
-                }
-
-            #>
+            Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Endpoint Provider { $endpointProvider }"
 
             <#  CONNECTIONS
 
@@ -183,27 +167,27 @@ function Invoke-Chester {
                     Initially, the idea is to possibly use PoshRSJob and force a brand new connection and run the child process in a new runspace,
                     for each Endpoint
 
-                #>
+            #>
 
             # Check for established session to desired vCenter server
-            If ($ep.cfg.vcenter.vc -notin $global:DefaultVIServers.Name) {
+            If ($resolvedEndpoint.cfg.vcenter.vc -notin $global:DefaultVIServers.Name) {
 
                 Try {
                     # Attempt connection to vCenter; prompts for credentials if needed
-                    Write-Verbose "No active connection found to configured vCenter '$($ep.cfg.vcenter.vc)'. Connecting"
-                    $VIServer = Connect-VIServer -Server $ep.cfg.vcenter.vc -Credential $ep.credential -ErrorAction Stop
+                    Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] No active connection found to configured vCenter { $($resolvedEndpoint.cfg.vcenter.vc) }. Connecting"
+                    $VIServer = Connect-VIServer -Server $resolvedEndpoint.cfg.vcenter.vc -Credential $resolvedEndpoint.credential -ErrorAction Stop
                 } Catch {
                     # If unable to connect, stop
-                    throw "Unable to connect to configured vCenter '$($ep.cfg.vcenter.vc)'. Exiting"
+                    throw "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Unable to connect to configured vCenter { $($resolvedEndpoint.cfg.vcenter.vc) }. $_ . Exiting."
                 }
 
             } Else {
 
-                $VIServer = $global:DefaultVIServers | Where-Object {$_.Name -match $ep.cfg.vcenter.vc}
+                $VIServer = $global:DefaultVIServers | Where-Object {$_.Name -match $resolvedEndpoint.cfg.vcenter.vc}
 
             } # end if/else
 
-            Write-Verbose "Processing against vCenter server '$($ep.cfg.vcenter.vc)'"
+            Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing Provider\Endpoint { $endpointProvider\$($resolvedEndpoint.Name) }"
 
             # Call Invoke-Pester based on the parameters supplied
             # Runs VesterTemplate.Tests.ps1, which constructs the .Vester.ps1 test files
@@ -215,17 +199,32 @@ function Invoke-Chester {
                 #>
 
             $providerPath = $null
-            $providerPath = "$(Split-Path -Parent $PSScriptRoot)\Providers\$($endpointProvider)"
+            $providerPath = "$(Split-Path -Parent $PSScriptRoot)\Providers\$endpointProvider"
 
-            If ($XMLOutputFile) {
+            if (-not (Test-Path -Path $providerPath)){
+                throw "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Provider { $endpointProvider } could not found at path { $providerPath }"
+            }
+
+
+            $initPath = $null
+            $initPath = Join-Path $providerPath 'Init.Tests.ps1'
+
+            if (-not (Test-Path -Path $initPath)){
+                throw "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Init file not found for Provider { $endpointProvider } at path { $providerPath } "
+            }
+
+            Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Provider path { $providerPath }"
+            Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Init path { $initPath }"
+
+            If ($XMLOutputPath) {
 
                 if ($Quiet) {
 
-                    Invoke-Pester -OutputFormat NUnitXml -OutputFile $XMLOutputFile -Quiet -Script @{
+                    Invoke-Pester -OutputFormat NUnitXml -OutputFile "$XMLOutputPath\$($resolvedEndpoint.Name).xml" -Quiet -Script @{
                         #Path       = "$(Split-Path -Parent $PSScriptRoot)\Providers\Template\VesterTemplate.Tests.ps1"
-                        Path       = "$providerPath\Init.Tests.ps1"
+                        Path       = $initPath
                         Parameters = @{
-                            Cfg       = $ep.cfg
+                            Cfg       = $resolvedEndpoint.cfg
                             TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
@@ -234,11 +233,11 @@ function Invoke-Chester {
 
                 } else {
 
-                    Invoke-Pester -OutputFormat NUnitXml -OutputFile $XMLOutputFile -Script @{
+                    Invoke-Pester -OutputFormat NUnitXml -OutputFile "$XMLOutputPath\$($resolvedEndpoint.Name).xml" -Script @{
                         #Path       = "$(Split-Path -Parent $PSScriptRoot)\Providers\Template\VesterTemplate.Tests.ps1"
-                        Path       = "$providerPath\Init.Tests.ps1"
+                        Path       = $initPath
                         Parameters = @{
-                            Cfg       = $ep.cfg
+                            Cfg       = $resolvedEndpoint.cfg
                             TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
@@ -251,9 +250,9 @@ function Invoke-Chester {
                 if ($Quiet) {
 
                     Invoke-Pester -PassThru -Quiet -Script @{
-                        Path       = "$providerPath\Init.Tests.ps1"
+                        Path       = $initPath
                         Parameters = @{
-                            Cfg       = $ep.cfg
+                            Cfg       = $resolvedEndpoint.cfg
                             TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
@@ -262,9 +261,9 @@ function Invoke-Chester {
                 } else {
 
                     Invoke-Pester -PassThru -Script @{
-                        Path       = "$providerPath\Init.Tests.ps1"
+                        Path       = $initPath
                         Parameters = @{
-                            Cfg       = $ep.cfg
+                            Cfg       = $resolvedEndpoint.cfg
                             TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
@@ -277,9 +276,9 @@ function Invoke-Chester {
                 if ($Quiet) {
 
                     Invoke-Pester -Qiuet -Script @{
-                        Path       = "$providerPath\Init.Tests.ps1"
+                        Path       = $initPath
                         Parameters = @{
-                            Cfg       = $ep.cfg
+                            Cfg       = $resolvedEndpoint.cfg
                             TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
@@ -288,9 +287,9 @@ function Invoke-Chester {
                 } else {
 
                     Invoke-Pester -Script @{
-                        Path       = "$providerPath\Init.Tests.ps1"
+                        Path       = $initPath
                         Parameters = @{
-                            Cfg       = $ep.cfg
+                            Cfg       = $resolvedEndpoint.cfg
                             TestFiles = Get-VesterTest $providerPath
                             Remediate = $Remediate
                         }
@@ -308,5 +307,11 @@ function Invoke-Chester {
         } # end foreach EndPoint
 
     } #Process
+
+    END {
+
+        Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing complete"
+
+    } # end END block
 
 } #function
