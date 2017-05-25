@@ -41,6 +41,10 @@ function Get-ChesterEndpoint {
                 $fetchEndpoint = $null
                 $fetchEndpoint = Get-ChildItem -Path $Path -Directory | Where-Object {$_.Name -eq $endpointEntry}
 
+                if($fetchEndpoint -eq $null) {
+                    Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Endpoint { $endpointEntry } could not be found."
+                }
+
                 $epArray += $fetchEndpoint
 
             } # end foreach
@@ -102,7 +106,7 @@ function Get-ChesterEndpoint {
 
             } # end 'Object'
 
-            'Names' {
+            'Name' {
 
                 $discoveredEndpoints.Name
 
