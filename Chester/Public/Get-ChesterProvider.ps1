@@ -30,6 +30,8 @@ function Get-ChesterProvider {
 
         Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing started"
 
+        $discoveredProvider = $null
+
         if ($PSBoundParameters.Keys.Contains('ProviderName')) {
 
             $providerArray = @()
@@ -41,18 +43,18 @@ function Get-ChesterProvider {
                 $fetchProvider = $null
                 $fetchProvider = Get-ChildItem -Path $Path -Directory | Where-Object {$_.Name -eq $provider}
 
+                if ($fetchProvider -eq $null) {
+                    Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Provider { $provider } could not be found."
+                }
+
                 $providerArray += $fetchProvider
 
             } # end foreach
 
-            # gather root Endpoint directories
-            $discoveredProvider = $null
             $discoveredProvider = $providerArray
 
         } else {
 
-            # gather root Endpoint directories
-            $discoveredProvider = $null
             $discoveredProvider = Get-ChildItem -Path $Path -Directory
 
         } # end if/else
@@ -70,55 +72,75 @@ function Get-ChesterProvider {
 
                 ForEach ($provider in $discoveredProvider) {
 
-                    if (Test-Path "$($provider.FullName)\Config.json") {
+                    Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing Provider { $provider }"
 
-                        # import endpoint configuration
-                        $importedConfig = $null
-                        $importedConfig = Get-Content -Path (Get-Item "$($endpoint.FullName)\Config.json" -ErrorAction 'SilentlyContinue') -Raw -ErrorAction 'SilentlyContinue'| ConvertFrom-Json -ErrorAction 'SilentlyContinue'
+
+
+                    # discover Scopes
+                    Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Discovering Scopes for Provider { $provider }"
+
+                    $providerScopes = $null
+                    $providerScopes = (Get-ChildItem -Path $provider.FullName -Directory).Name
+
+
+
+                    # discover test/test files
+                    Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Discovering Tests for Provider { $provider }"
+
+                    $scopeHash = @{
+                        Name       = 'Scope'
+                        Expression = {
+                            (Get-item (Split-Path $_.FullName -Parent)).Name
+                        }
+                    } # $scopeHash
+
+                    $testHash = @{
+                        Name       = 'Test'
+                        Expression = {
+                            ($_.Name).Split('.')[0]
+                        }
+                    } # $testHash
+
+                    $providerTests = $null
+                    $providerTests = Get-ChildItem -Path $provider.FullName -Recurse -Filter '*.Vester.ps1' | Select-Object $testHash,$scopeHash
+
+
+
+                    # discover config creation script
+                    Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Discovering Configuration Creation Script for Provider { $provider }"
+
+
+
+                    if (Test-Path "$($provider.FullName)\Config-Spec.ps1") {
+
+                        $createConfigScript = $null
+                        $createConfigScript = "$($provider.FullName)\Config-Spec.ps1"
 
                     } else {
 
-                        Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Configuration file not found for endpoint { $endpoint } at path { $($endpoint.FullName)\Config.json }"
+                        Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Configuration Creation Script file not found for endpoint { $provider } at path { $($provider.FullName)\Config-Spec.ps1 }"
 
                     } # end if/else
 
 
-                    $createConfigScript = $null
-                    $newConfigFileName  = $null
-                    $newConfigFileName  = 'Create-Config.' + $endpoint.Name + '.ps1'
-
-                    if (Test-Path "$($endpoint.FullName)\$newConfigFileName") {
-
-                        $createConfigScript = $newConfigFileName
-
-                    } else {
-
-                        Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] New Configuration Script file not found for endpoint { $endpoint } at path { $($endpoint.FullName)\$newConfigFileName }"
-
-                    } # end if/else
-
-                    # gather endpoint authentication
-                    $importedAuth = $null
-                    $importedAuth = Import-ChesterCredential -Path "$($endpoint.FullName)\Authentication.clixml" -ErrorAction 'SilentlyContinue'
-
-                    # add endpoint configuration to the final endpoint config array
+                    # add provider configuration to the final provider config array
                     $providerObj = @()
                     $providerObj = [PSCustomObject] @{
-                        Name               = $endpoint.Name
-                        Scopes             = $importedConfig
-                        Tests              = $importedAuth
+                        Name               = $provider.Name
+                        Scopes             = $providerScopes
+                        Tests              = $providerTests
                         CreateConfigScript = $createConfigScript
                     }
 
-                    $endpointConfiguration += $providerObj
+                    $providerConfiguration += $providerObj
 
                 } # end foreach $endpoint
 
-                $endpointConfiguration
+                $providerConfiguration
 
             } # end 'Object'
 
-            'Names' {
+            'Name' {
 
                 $discoveredEndpoints.Name
 
