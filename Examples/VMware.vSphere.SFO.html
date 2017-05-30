@@ -1,0 +1,1688 @@
+﻿<!DOCTYPE html>
+<html lang='en'>
+<!--
+                ReportUnit 1.5 |
+                Created by Anshoo Arora (Relevant Codes) | Released under the MIT license
+
+                Template from:
+
+                    ExtentReports Library | http://relevantcodes.com/extentreports-for-selenium/ | https://github.com/anshooarora/
+                    Copyright (c) 2015, Anshoo Arora (Relevant Codes) | Copyrights licensed under the New BSD License | http://opensource.org/licenses/BSD-3-Clause
+                    Documentation: http://extentreports.relevantcodes.com
+            -->
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name='description' content=''>
+    <meta name='author' content=''>
+    <title>Chester Report</title>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/css/materialize.min.css'
+        rel='stylesheet' type='text/css'>
+    <link href='https://cdn.rawgit.com/reportunit/reportunit/785c3312e42c0650e7882109db9cca4ffae4259f/cdn/reportunit.css'
+        type='text/css' rel='stylesheet' />
+</head>
+
+<body>
+    <div class='header'>
+        <nav>
+            <ul id='slide-out' class='side-nav fixed'>
+                <li class='waves-effect report-item'><a href='./Index.html'><i class='mdi-action-assignment'></i><span class='sidenav-filename'>Index</span></a></li>
+                <li
+                    class='waves-effect report-item'><a href='./VMware.vSphere.NYC.html'><i class='mdi-action-assignment'></i><span class='sidenav-filename'>VMware.vSphere.NYC</span></a></li>
+                    <li
+                        class='waves-effect report-item'><a href='./VMware.vSphere.SFO.html'><i class='mdi-action-assignment'></i><span class='sidenav-filename'>VMware.vSphere.SFO</span></a></li>
+            </ul><span class='file-name'>VMware.vSphere.SFO</span>
+            <ul class='left'>
+                <li class='logo'><a href=''><span>Chester</span></a></li>
+            </ul>
+            <ul class='right nav-right'>
+                <li class='nav-item'><a class='modal-trigger waves-effect waves-light run-info-icon tooltipped' data-position='bottom' data-tooltip='Run Info'
+                        href='#modal1'><i class='mdi-action-info-outline'></i></a></li>
+                <!-- <div class='nav-item'><a class='modal-trigger waves-effect waves-light console-logs-icon tooltipped' data-position='bottom' data-tooltip='Console Logs' href='#modal2'><i class='mdi-action-assignment'></i></a></div> -->
+                <li class='nav-item'>v1.50.0</li>
+            </ul>
+        </nav>
+    </div>
+    <div class='main'>
+        <div class='main-wrap'>
+            <div class='row dashboard'>
+                <div class='col s12 m6 l4'>
+                    <div class='card-panel'>
+                        <div alt='Count of all passed tests' title='Count of all passed tests'>Suite Summary</div>
+                        <div class='chart-box'>
+                            <canvas class='text-centered' id='suite-analysis'></canvas>
+                        </div>
+                        <div><span class='weight-light'><span class='suite-pass-count weight-normal'></span> suites(s) passed</span>
+                        </div>
+                        <div><span class='weight-light'><span class='suite-fail-count weight-normal'></span> suites(s) failed,
+                            <span class='suite-others-count weight-normal'></span> others</span>
+                        </div>
+                    </div>
+                </div>
+                <div class='col s12 m6 l4'>
+                    <div class='card-panel'>
+                        <div alt='Count of all failed tests' title='Count of all failed tests'>Tests Summary</div>
+                        <div class='chart-box'>
+                            <canvas class='text-centered' id='test-analysis'></canvas>
+                        </div>
+                        <div><span class='weight-light'><span class='test-pass-count weight-normal'>95</span> test(s) passed</span>
+                        </div>
+                        <div><span class='weight-light'><span class='test-fail-count weight-normal'>19</span> test(s) failed,
+                            <span class='test-others-count weight-normal'>0</span> others</span>
+                        </div>
+                    </div>
+                </div>
+                <div class='col s12 m12 l4'>
+                    <div class='card-panel'>
+                        <div alt='Count of all inconclusive tests' title='Count of all inconclusive tests'>Pass Percentage</div>
+                        <div class='panel-lead pass-percentage'></div>
+                        <div class='progress'>
+                            <div class='determinate'></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row'>
+                <div id='suites' class='suites'>
+                    <div class='col'>
+                        <div class='card-panel no-padding no-margin-v suite-list v-spacer'>
+                            <div class='filters card-panel'>
+                                <div><a class='dropdown-button button' href='#' data-hover='true' data-beloworigin='true' data-constrainwidth='true'
+                                        data-activates='suite-toggle' alt='Filter suites' title='Filter suites'><i class='mdi-file-folder-open icon'></i></a>
+                                    <ul
+                                        class='dropdown-content' id='suite-toggle'>
+                                        <ul>
+                                            <li class='Passed'><a href='#!'>Passed</a></li>
+                                            <li class='Failed'><a href='#!'>Failed</a></li>
+                                            <li class='divider'></li>
+                                            <li class='clear'><a href='#!'>Clear Filters</a></li>
+                                        </ul>
+                                </div>
+                                <div><a class='dropdown-button button' href='#' data-hover='true' data-beloworigin='true' data-constrainwidth='true'
+                                        data-activates='tests-toggle' alt='Filter tests' title='Filter tests'><i class='mdi-action-subject icon'></i></a>
+                                    <ul
+                                        class='dropdown-content' id='tests-toggle'>
+                                        <ul>
+                                            <li class='Passed'><a href='#!'>Passed</a></li>
+                                            <li class='Failed'><a href='#!'>Failed</a></li>
+                                            <li class='divider'></li>
+                                            <li class='clear'><a href='#!'>Clear Filters</a></li>
+                                        </ul>
+                                </div>
+                                <div><a title='Clear Filters' alt='Clear Filters' id='clear-filters' class='clear'><i class='mdi-navigation-close icon'></i></a>                                    </div> &nbsp;
+                                <div> <a title='Enable Dashboard' alt='Enable Dashboard' id='enableDashboard' class='enabled'><i class='mdi-action-track-changes icon active'></i></a>                                    </div>
+                            </div>
+                            <ul id='suite-collection' class='no-margin-v'>
+                                <li class='suite passed'>
+                                    <div class='suite-head'>
+                                        <div class='suite-name'>Cluster Configuration: DRS-Enabled.Vester.ps1</div>
+                                        <div class='suite-result passed right label'>Passed</div>
+                                    </div>
+                                    <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.0933</span>
+                                        <div
+                                            class='fixture-status-message'></div>
+                                    <table class='bordered'>
+                                        <thead>
+                                            <tr>
+                                                <th>TestName</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class='passed test-status'>
+                                                <td class='test-name'><span class='name'>Cluster Configuration: DRS-Enabled.Vester.ps1.Cluster sfo-clus-photon - DRS State</span></td>
+                                                <td
+                                                    class='test-status passed'><span class='label passed'>Passed</span></td>
+                                                    <td class='test-features hide '></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                        </div>
+                        </li>
+                        <li class='suite passed'>
+                            <div class='suite-head'>
+                                <div class='suite-name'>Cluster Configuration: DRS-Level.Vester.ps1</div>
+                                <div class='suite-result passed right label'>Passed</div>
+                            </div>
+                            <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.0494</span>
+                                <div
+                                    class='fixture-status-message'></div>
+                            <table class='bordered'>
+                                <thead>
+                                    <tr>
+                                        <th>TestName</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class='passed test-status'>
+                                        <td class='test-name'><span class='name'>Cluster Configuration: DRS-Level.Vester.ps1.Cluster sfo-clus-photon - DRS Automation Level</span></td>
+                                        <td
+                                            class='test-status passed'><span class='label passed'>Passed</span></td>
+                                            <td class='test-features hide '></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                    </li>
+                    <li class='suite failed'>
+                        <div class='suite-head'>
+                            <div class='suite-name'>Cluster Configuration: DRS-Mode.Vester.ps1</div>
+                            <div class='suite-result failed right label'>Failed</div>
+                        </div>
+                        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.1126</span>
+                            <div
+                                class='fixture-status-message'></div>
+                        <table class='bordered'>
+                            <thead>
+                                <tr>
+                                    <th>TestName</th>
+                                    <th>Status</th>
+                                    <th>StatusMessage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class='failed test-status'>
+                                    <td class='test-name'><span class='name'>Cluster Configuration: DRS-Mode.Vester.ps1.Cluster sfo-clus-photon - DRS Migration Threshold</span></td>
+                                    <td
+                                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                                        <td>
+                                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=3; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                                        </td>
+                                        <td class='test-features hide '></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                </div>
+                </li>
+                <li class='suite passed'>
+                    <div class='suite-head'>
+                        <div class='suite-name'>Cluster Configuration: HA-Enabled.Vester.ps1</div>
+                        <div class='suite-result passed right label'>Passed</div>
+                    </div>
+                    <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.0486</span>
+                        <div
+                            class='fixture-status-message'></div>
+                    <table class='bordered'>
+                        <thead>
+                            <tr>
+                                <th>TestName</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class='passed test-status'>
+                                <td class='test-name'><span class='name'>Cluster Configuration: HA-Enabled.Vester.ps1.Cluster sfo-clus-photon - HA State</span></td>
+                                <td
+                                    class='test-status passed'><span class='label passed'>Passed</span></td>
+                                    <td class='test-features hide '></td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+            </li>
+            <li class='suite passed'>
+                <div class='suite-head'>
+                    <div class='suite-name'>Host Configuration: Account-Lockout.Vester.ps1</div>
+                    <div class='suite-result passed right label'>Passed</div>
+                </div>
+                <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.5107</span>
+                    <div
+                        class='fixture-status-message'></div>
+                <table class='bordered'>
+                    <thead>
+                        <tr>
+                            <th>TestName</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class='passed test-status'>
+                            <td class='test-name'><span class='name'>Host Configuration: Account-Lockout.Vester.ps1.Host vesx-photon-01.sfo.local - Account Lock Failures</span></td>
+                            <td
+                                class='test-status passed'><span class='label passed'>Passed</span></td>
+                                <td class='test-features hide '></td>
+                        </tr>
+                        <tr class='passed test-status'>
+                            <td class='test-name'><span class='name'>Host Configuration: Account-Lockout.Vester.ps1.Host vesx-photon-02.sfo.local - Account Lock Failures</span></td>
+                            <td
+                                class='test-status passed'><span class='label passed'>Passed</span></td>
+                                <td class='test-features hide '></td>
+                        </tr>
+                        <tr class='passed test-status'>
+                            <td class='test-name'><span class='name'>Host Configuration: Account-Lockout.Vester.ps1.Host vesx-photon-03.sfo.local - Account Lock Failures</span></td>
+                            <td
+                                class='test-status passed'><span class='label passed'>Passed</span></td>
+                                <td class='test-features hide '></td>
+                        </tr>
+                        <tr class='passed test-status'>
+                            <td class='test-name'><span class='name'>Host Configuration: Account-Lockout.Vester.ps1.Host vesx-photon-04.sfo.local - Account Lock Failures</span></td>
+                            <td
+                                class='test-status passed'><span class='label passed'>Passed</span></td>
+                                <td class='test-features hide '></td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+        </li>
+        <li class='suite passed'>
+            <div class='suite-head'>
+                <div class='suite-name'>Host Configuration: Account-UnlockTime.Vester.ps1</div>
+                <div class='suite-result passed right label'>Passed</div>
+            </div>
+            <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.5053</span>
+                <div
+                    class='fixture-status-message'></div>
+            <table class='bordered'>
+                <thead>
+                    <tr>
+                        <th>TestName</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class='passed test-status'>
+                        <td class='test-name'><span class='name'>Host Configuration: Account-UnlockTime.Vester.ps1.Host vesx-photon-01.sfo.local - Account Unlock Time</span></td>
+                        <td
+                            class='test-status passed'><span class='label passed'>Passed</span></td>
+                            <td class='test-features hide '></td>
+                    </tr>
+                    <tr class='passed test-status'>
+                        <td class='test-name'><span class='name'>Host Configuration: Account-UnlockTime.Vester.ps1.Host vesx-photon-02.sfo.local - Account Unlock Time</span></td>
+                        <td
+                            class='test-status passed'><span class='label passed'>Passed</span></td>
+                            <td class='test-features hide '></td>
+                    </tr>
+                    <tr class='passed test-status'>
+                        <td class='test-name'><span class='name'>Host Configuration: Account-UnlockTime.Vester.ps1.Host vesx-photon-03.sfo.local - Account Unlock Time</span></td>
+                        <td
+                            class='test-status passed'><span class='label passed'>Passed</span></td>
+                            <td class='test-features hide '></td>
+                    </tr>
+                    <tr class='passed test-status'>
+                        <td class='test-name'><span class='name'>Host Configuration: Account-UnlockTime.Vester.ps1.Host vesx-photon-04.sfo.local - Account Unlock Time</span></td>
+                        <td
+                            class='test-status passed'><span class='label passed'>Passed</span></td>
+                            <td class='test-features hide '></td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: Advanced-Kernel-iovDisableIR.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.5433</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Advanced-Kernel-iovDisableIR.Vester.ps1.Host vesx-photon-01.sfo.local - Kernel Setting iovDisableIR</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Advanced-Kernel-iovDisableIR.Vester.ps1.Host vesx-photon-02.sfo.local - Kernel Setting iovDisableIR</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Advanced-Kernel-iovDisableIR.Vester.ps1.Host vesx-photon-03.sfo.local - Kernel Setting iovDisableIR</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Advanced-Kernel-iovDisableIR.Vester.ps1.Host vesx-photon-04.sfo.local - Kernel Setting iovDisableIR</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: BDPU-Filter.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.4697</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: BDPU-Filter.Vester.ps1.Host vesx-photon-01.sfo.local - Network BDPU Filter</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: BDPU-Filter.Vester.ps1.Host vesx-photon-02.sfo.local - Network BDPU Filter</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: BDPU-Filter.Vester.ps1.Host vesx-photon-03.sfo.local - Network BDPU Filter</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: BDPU-Filter.Vester.ps1.Host vesx-photon-04.sfo.local - Network BDPU Filter</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: DCUI-Access.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.4918</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DCUI-Access.Vester.ps1.Host vesx-photon-01.sfo.local - DCUI Access</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DCUI-Access.Vester.ps1.Host vesx-photon-02.sfo.local - DCUI Access</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DCUI-Access.Vester.ps1.Host vesx-photon-03.sfo.local - DCUI Access</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DCUI-Access.Vester.ps1.Host vesx-photon-04.sfo.local - DCUI Access</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: DCUI-Timeout.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.5254</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DCUI-Timeout.Vester.ps1.Host vesx-photon-01.sfo.local - DCUI Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DCUI-Timeout.Vester.ps1.Host vesx-photon-02.sfo.local - DCUI Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DCUI-Timeout.Vester.ps1.Host vesx-photon-03.sfo.local - DCUI Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DCUI-Timeout.Vester.ps1.Host vesx-photon-04.sfo.local - DCUI Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: Disk-MaxLUN.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.5096</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Disk-MaxLUN.Vester.ps1.Host vesx-photon-01.sfo.local - Disk MaxLUN</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Disk-MaxLUN.Vester.ps1.Host vesx-photon-02.sfo.local - Disk MaxLUN</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Disk-MaxLUN.Vester.ps1.Host vesx-photon-03.sfo.local - Disk MaxLUN</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Disk-MaxLUN.Vester.ps1.Host vesx-photon-04.sfo.local - Disk MaxLUN</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite failed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: DNS-Address.Vester.ps1</div>
+            <div class='suite-result failed right label'>Failed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.5709</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                    <th>StatusMessage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DNS-Address.Vester.ps1.Host vesx-photon-01.sfo.local - DNS Servers</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=192.168.1.11; SideIndicator=<=}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DNS-Address.Vester.ps1.Host vesx-photon-02.sfo.local - DNS Servers</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=192.168.1.11; SideIndicator=<=}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DNS-Address.Vester.ps1.Host vesx-photon-03.sfo.local - DNS Servers</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=192.168.1.11; SideIndicator=<=}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: DNS-Address.Vester.ps1.Host vesx-photon-04.sfo.local - DNS Servers</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=192.168.1.11; SideIndicator=<=}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: NetDump-Settings.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.9686</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NetDump-Settings.Vester.ps1.Host vesx-photon-01.sfo.local - Network Dump Settings</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NetDump-Settings.Vester.ps1.Host vesx-photon-02.sfo.local - Network Dump Settings</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NetDump-Settings.Vester.ps1.Host vesx-photon-03.sfo.local - Network Dump Settings</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NetDump-Settings.Vester.ps1.Host vesx-photon-04.sfo.local - Network Dump Settings</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: NetDump-SettingsEnable.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.3967</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NetDump-SettingsEnable.Vester.ps1.Host vesx-photon-01.sfo.local - Network Dump Enable</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NetDump-SettingsEnable.Vester.ps1.Host vesx-photon-02.sfo.local - Network Dump Enable</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NetDump-SettingsEnable.Vester.ps1.Host vesx-photon-03.sfo.local - Network Dump Enable</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NetDump-SettingsEnable.Vester.ps1.Host vesx-photon-04.sfo.local - Network Dump Enable</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: NTP-Servers.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.3088</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Servers.Vester.ps1.Host vesx-photon-01.sfo.local - NTP Servers</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Servers.Vester.ps1.Host vesx-photon-02.sfo.local - NTP Servers</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Servers.Vester.ps1.Host vesx-photon-03.sfo.local - NTP Servers</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Servers.Vester.ps1.Host vesx-photon-04.sfo.local - NTP Servers</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite failed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: NTP-Service-Policy.Vester.ps1</div>
+            <div class='suite-result failed right label'>Failed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.4341</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                    <th>StatusMessage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Service-Policy.Vester.ps1.Host vesx-photon-01.sfo.local - NTP Service Policy</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=off; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Service-Policy.Vester.ps1.Host vesx-photon-02.sfo.local - NTP Service Policy</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=off; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Service-Policy.Vester.ps1.Host vesx-photon-03.sfo.local - NTP Service Policy</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=off; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Service-Policy.Vester.ps1.Host vesx-photon-04.sfo.local - NTP Service Policy</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=off; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite failed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: NTP-Service.Vester.ps1</div>
+            <div class='suite-result failed right label'>Failed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.4309</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                    <th>StatusMessage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Service.Vester.ps1.Host vesx-photon-01.sfo.local - NTP Service State</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=False; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Service.Vester.ps1.Host vesx-photon-02.sfo.local - NTP Service State</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=False; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Service.Vester.ps1.Host vesx-photon-03.sfo.local - NTP Service State</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=False; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: NTP-Service.Vester.ps1.Host vesx-photon-04.sfo.local - NTP Service State</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=False; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: Password-Policy.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.5339</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Password-Policy.Vester.ps1.Host vesx-photon-01.sfo.local - Password Policy</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Password-Policy.Vester.ps1.Host vesx-photon-02.sfo.local - Password Policy</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Password-Policy.Vester.ps1.Host vesx-photon-03.sfo.local - Password Policy</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Password-Policy.Vester.ps1.Host vesx-photon-04.sfo.local - Password Policy</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: SSH-InteractiveTimeout.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.5395</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-InteractiveTimeout.Vester.ps1.Host vesx-photon-01.sfo.local - SSH Interactive Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-InteractiveTimeout.Vester.ps1.Host vesx-photon-02.sfo.local - SSH Interactive Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-InteractiveTimeout.Vester.ps1.Host vesx-photon-03.sfo.local - SSH Interactive Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-InteractiveTimeout.Vester.ps1.Host vesx-photon-04.sfo.local - SSH Interactive Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite failed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: SSH-Service-Policy.Vester.ps1</div>
+            <div class='suite-result failed right label'>Failed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.4568</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                    <th>StatusMessage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Service-Policy.Vester.ps1.Host vesx-photon-01.sfo.local - SSH Service Policy</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=on; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Service-Policy.Vester.ps1.Host vesx-photon-02.sfo.local - SSH Service Policy</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=on; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Service-Policy.Vester.ps1.Host vesx-photon-03.sfo.local - SSH Service Policy</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=on; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Service-Policy.Vester.ps1.Host vesx-photon-04.sfo.local - SSH Service Policy</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=on; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: SSH-Service.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.4244</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Service.Vester.ps1.Host vesx-photon-01.sfo.local - SSH Service State</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Service.Vester.ps1.Host vesx-photon-02.sfo.local - SSH Service State</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Service.Vester.ps1.Host vesx-photon-03.sfo.local - SSH Service State</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Service.Vester.ps1.Host vesx-photon-04.sfo.local - SSH Service State</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: SSH-Timeout.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.5209</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Timeout.Vester.ps1.Host vesx-photon-01.sfo.local - SSH Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Timeout.Vester.ps1.Host vesx-photon-02.sfo.local - SSH Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Timeout.Vester.ps1.Host vesx-photon-03.sfo.local - SSH Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Timeout.Vester.ps1.Host vesx-photon-04.sfo.local - SSH Timeout</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: SSH-Warning.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.5077</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Warning.Vester.ps1.Host vesx-photon-01.sfo.local - SSH Warning</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Warning.Vester.ps1.Host vesx-photon-02.sfo.local - SSH Warning</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Warning.Vester.ps1.Host vesx-photon-03.sfo.local - SSH Warning</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: SSH-Warning.Vester.ps1.Host vesx-photon-04.sfo.local - SSH Warning</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: Syslog-Firewall.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.0346</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Syslog-Firewall.Vester.ps1.Host vesx-photon-01.sfo.local - Syslog Firewall</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Syslog-Firewall.Vester.ps1.Host vesx-photon-02.sfo.local - Syslog Firewall</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Syslog-Firewall.Vester.ps1.Host vesx-photon-03.sfo.local - Syslog Firewall</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Syslog-Firewall.Vester.ps1.Host vesx-photon-04.sfo.local - Syslog Firewall</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: Syslog-Server.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.9946</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Syslog-Server.Vester.ps1.Host vesx-photon-01.sfo.local - Syslog Server</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Syslog-Server.Vester.ps1.Host vesx-photon-02.sfo.local - Syslog Server</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Syslog-Server.Vester.ps1.Host vesx-photon-03.sfo.local - Syslog Server</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: Syslog-Server.Vester.ps1.Host vesx-photon-04.sfo.local - Syslog Server</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: TPS-ForceSalting.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>1.4645</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: TPS-ForceSalting.Vester.ps1.Host vesx-photon-01.sfo.local - Transparent Page Share Force Salting</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: TPS-ForceSalting.Vester.ps1.Host vesx-photon-02.sfo.local - Transparent Page Share Force Salting</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: TPS-ForceSalting.Vester.ps1.Host vesx-photon-03.sfo.local - Transparent Page Share Force Salting</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: TPS-ForceSalting.Vester.ps1.Host vesx-photon-04.sfo.local - Transparent Page Share Force Salting</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>Host Configuration: VIB-AcceptanceLevel.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>7.418</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: VIB-AcceptanceLevel.Vester.ps1.Host vesx-photon-01.sfo.local - Image Profile and VIB Acceptance Level</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: VIB-AcceptanceLevel.Vester.ps1.Host vesx-photon-02.sfo.local - Image Profile and VIB Acceptance Level</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: VIB-AcceptanceLevel.Vester.ps1.Host vesx-photon-03.sfo.local - Image Profile and VIB Acceptance Level</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>Host Configuration: VIB-AcceptanceLevel.Vester.ps1.Host vesx-photon-04.sfo.local - Image Profile and VIB Acceptance Level</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: Boot-Delay.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.141</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Boot-Delay.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - Boot delay</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Boot-Delay.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - Boot delay</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite failed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: CDDrive-Host.Vester.ps1</div>
+            <div class='suite-result failed right label'>Failed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.1782</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                    <th>StatusMessage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: CDDrive-Host.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - CD-ROM Host Device</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=False; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='failed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: CDDrive-Host.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - CD-ROM Host Device</span></td>
+                    <td
+                        class='test-status failed'><span class='label failed'>Failed</span></td>
+                        <td>
+                            <div class='badge showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                            <pre class='hide'>Expected: value to be empty but it was {@{InputObject=False; SideIndicator==>}}at line: 110 in C:\Users\local-admin\Documents\WindowsPowerShell\Modules\chester\Providers\VMware.vSphere\Init.Tests.ps1
+110:                             Should BeNullOrEmpty</pre>
+                        </td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: CDDrive-ISO.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.1794</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: CDDrive-ISO.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - CD-ROM ISO File</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: CDDrive-ISO.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - CD-ROM ISO File</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: CPU-Limits.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.1759</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: CPU-Limits.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - CPU Limits Test</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: CPU-Limits.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - CPU Limits Test</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: CPU-Reservation.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.0677</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: CPU-Reservation.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - CPU Reservation</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: CPU-Reservation.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - CPU Reservation</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: Memory-Limits.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.2424</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Memory-Limits.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - Memory Limits Test</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Memory-Limits.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - Memory Limits Test</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: Memory-Reservation.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.0645</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Memory-Reservation.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - Memory Reservation</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Memory-Reservation.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - Memory Reservation</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: Snapshot-Retention.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.1934</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Snapshot-Retention.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - VM Snapshot Retention</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Snapshot-Retention.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - VM Snapshot Retention</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    <li class='suite passed'>
+        <div class='suite-head'>
+            <div class='suite-name'>VM Configuration: Sync-TimeSettings.Vester.ps1</div>
+            <div class='suite-result passed right label'>Passed</div>
+        </div>
+        <div class='suite-content hide'><span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>0.0705</span>
+            <div
+                class='fixture-status-message'></div>
+        <table class='bordered'>
+            <thead>
+                <tr>
+                    <th>TestName</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Sync-TimeSettings.Vester.ps1.VM 482d591b-7787-47e6-bad8-17af589439c3 - Sync Time Settings</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+                <tr class='passed test-status'>
+                    <td class='test-name'><span class='name'>VM Configuration: Sync-TimeSettings.Vester.ps1.VM 31e53716-753d-4015-bb26-fd16b67ba4cf - Sync Time Settings</span></td>
+                    <td
+                        class='test-status passed'><span class='label passed'>Passed</span></td>
+                        <td class='test-features hide '></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </li>
+    </ul>
+    </div>
+    </div>
+    <div class='col'>
+        <div class='card-panel suite-details no-margin-v v-spacer'>
+            <h5 class='suite-name-displayed'></h5>
+            <div class='details-container'></div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <div id='modal1' class='modal'>
+        <div class='modal-content'>
+            <h4>
+                <!--%FILENAME%-->RunInfo</h4>
+            <table class='bordered'>
+                <thead>
+                    <tr>
+                        <th>Param</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TestRunner</td>
+                        <td>NUnit</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class='modal-footer'><a href='#!' class='modal-action modal-close waves-effect waves-green btn-flat'>Close</a></div>
+        <div class='hidden total-tests'>
+            <!--%TOTALTESTS%-->
+        </div>
+        <div class='hidden total-passed'>
+            <!--%PASSED%-->
+        </div>
+        <div class='hidden total-failed'>
+            <!--%FAILED%-->
+        </div>
+        <div class='hidden total-inconclusive'>
+            <!--%INCONCLUSIVE%-->
+        </div>
+        <div class='hidden total-errors'>
+            <!--%ERRORS%-->
+        </div>
+        <div class='hidden total-skipped'>
+            <!--%SKIPPED%-->
+        </div>
+    </div>
+    <div id='dynamicModal' class='modal modal-trigger' in_duration='0' induration='0'>
+        <div class='modal-content'>
+            <h4></h4>
+            <pre></pre>
+        </div>
+    </div>
+</body>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/js/materialize.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+<script src='https://cdn.rawgit.com/reportunit/reportunit/785c3312e42c0650e7882109db9cca4ffae4259f/cdn/reportunit.js'
+    type='text/javascript'></script>
+
+</html>
