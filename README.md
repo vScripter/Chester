@@ -17,6 +17,10 @@ This project is inspired by a few different projects that offer similar capabili
 ### Example Reports
 
 ![](https://github.com/vScripter/Chester/blob/master/Examples/0_Index.png)
+![](https://github.com/vScripter/Chester/blob/master/Examples/1_VMware.vSphere.NYC.png)
+![](https://github.com/vScripter/Chester/blob/master/Examples/2_VMware.vSphere.SFO.png)
+![](https://github.com/vScripter/Chester/blob/master/Examples/3_Failed%20Test.png)
+![](https://github.com/vScripter/Chester/blob/master/Examples/4_Failed%20Test%20Detail.png)
 
 [Vester]: https://github.com/WahlNetwork/Vester
 [VMware vCheck Report]: https://github.com/alanrenouf/vCheck-vSphere
