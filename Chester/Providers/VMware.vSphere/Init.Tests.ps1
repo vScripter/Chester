@@ -21,7 +21,7 @@ Param(
     [switch]$Remediate
 )
 
-Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing started"
+Write-Verbose -Message "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing started"
 
 # Gets the scope, the objects for the scope and their requested test files
 $Scopes = Split-Path (Split-Path $TestFiles -Parent) -Leaf | Select -Unique
@@ -29,12 +29,12 @@ $Final = @()
 $InventoryList = @()
 $Datacenter = Get-Datacenter -Name $cfg.scope.datacenter -Server $cfg.vcenter.vc
 
-Write-Debug -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][DEBUG] Scopes: { $Scopes }"
+Write-Debug -Message "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)][DEBUG] Scopes: { $Scopes }"
 
 # Process .Vester.ps1 files one at a time
 ForEach ($Scope in $Scopes) {
 
-    Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing Scope { $Scope }"
+    Write-Verbose "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing Scope { $Scope }"
     Remove-Variable InventoryList -ErrorAction SilentlyContinue # Makes sure the variable is always fresh
     # Use $Scope (parent folder) to get the correct objects to test against
     # If changing values here, update the "$Scope -notmatch" test below as well
@@ -72,10 +72,10 @@ foreach ($Scope in $Final.Scope) {
     # The parent folder must be one of these names, to help with $Object scoping below
     # If adding here, also needs to be added to the switch below
     If ('vCenter|Datacenter|Cluster|DSCluster|Host|VM|Network' -notmatch $Scope) {
-        Write-Warning "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Skipping test $TestName. Use -Verbose for more details"
-        Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Test files should be in a folder with one of the following names:"
-        Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] vCenter / Datacenter / Cluster / DSCluster / Host / VM / Network"
-        Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] This helps Vester determine which inventory object(s) to use during the test."
+        Write-Warning "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] Skipping test $TestName. Use -Verbose for more details"
+        Write-Verbose "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] Test files should be in a folder with one of the following names:"
+        Write-Verbose "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] vCenter / Datacenter / Cluster / DSCluster / Host / VM / Network"
+        Write-Verbose "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] This helps Vester determine which inventory object(s) to use during the test."
         # Use continue to skip this test and go to the next loop iteration
         continue
     }
@@ -83,7 +83,7 @@ foreach ($Scope in $Final.Scope) {
     # Runs through each test file on the below objects in the current scope
     foreach ($Test in $Tests) {
 
-        Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing test file $Test"
+        Write-Verbose "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] Processing test file $Test"
         $TestName = $null
         $TestName = Split-Path $Test -Leaf
 
@@ -93,7 +93,7 @@ foreach ($Scope in $Final.Scope) {
 
             # Pump the brakes if the config value is $null
             If ($Desired -eq $null) {
-                Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Due to null config value, skipping test $TestName"
+                Write-Verbose "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] Due to null config value, skipping test $TestName"
                 # Use continue to skip this test and go to the next loop iteration
                 continue
             }
@@ -112,10 +112,10 @@ foreach ($Scope in $Final.Scope) {
                         # If the comparison found something different,
                         # Then check if we're going to fix it
                         If ($Remediate) {
-                            Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] $_"
+                            Write-Warning -Message "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] $_"
                             # -WhatIf support wraps the command that would change values
                             If ($PSCmdlet.ShouldProcess("vCenter '$($cfg.vcenter.vc)' - $Scope '$Object'", "Set '$Title' value to '$Desired'")) {
-                                Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Remediating $Object"
+                                Write-Warning -Message "[VMware.vSphere][$($PSCmdlet.MyInvocation.MyCommand.Name)] Remediating $Object"
                                 # Execute the $Fix script block
                                 & $Fix
                             }
