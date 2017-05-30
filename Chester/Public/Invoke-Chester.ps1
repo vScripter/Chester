@@ -111,7 +111,9 @@ function Invoke-Chester {
         # Optionally save Pester output in NUnitXML format to a specified path
         # Specifying a path automatically triggers Pester in NUnitXML mode
         [ValidateScript( {Test-Path $_ -PathType Container})]
-        [object]$XMLOutputPath,
+        [object]$XMLOutputPath = "$Home\.chester\_Report",
+
+        [switch]$GenerateReport,
 
         # Optionally returns the Pester result as an object containing the information about the whole test run, and each test
         # Defaults to false (disabled)
@@ -216,7 +218,7 @@ function Invoke-Chester {
             Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Provider path { $providerPath }"
             Write-Verbose "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Init path { $initPath }"
 
-            If ($XMLOutputPath) {
+            If ($GenerateReport) {
 
                 if ($Quiet) {
 
@@ -230,6 +232,8 @@ function Invoke-Chester {
                         }
                     } # Invoke-Pester
 
+                    New-ChesterReport
+
 
                 } else {
 
@@ -242,6 +246,8 @@ function Invoke-Chester {
                             Remediate = $Remediate
                         }
                     } # Invoke-Pester
+
+                    New-ChesterReport
 
                 } # end if/else
 
