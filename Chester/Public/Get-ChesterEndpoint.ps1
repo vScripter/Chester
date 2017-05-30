@@ -39,7 +39,7 @@ function Get-ChesterEndpoint {
                 Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Looking for Endpoint { $endpointEntry }"
 
                 $fetchEndpoint = $null
-                $fetchEndpoint = Get-ChildItem -Path $Path -Directory | Where-Object {$_.Name -eq $endpointEntry}
+                $fetchEndpoint = Get-ChildItem -Path $Path -Directory -Exclude '_*' | Where-Object {$_.Name -like $endpointEntry}
 
                 if($fetchEndpoint -eq $null) {
                     Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Endpoint { $endpointEntry } could not be found."
@@ -57,7 +57,7 @@ function Get-ChesterEndpoint {
 
             # gather root Endpoint directories
             $discoveredEndpoints = $null
-            $discoveredEndpoints = Get-ChildItem -Path $Path -Directory
+            $discoveredEndpoints = Get-ChildItem -Path $Path -Directory -Exclude '_*'
 
         } # end if/else
 
