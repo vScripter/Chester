@@ -5,14 +5,20 @@
 
 Lightweight, plugin-based infrastructure validation and remediation using PowerShell and Pester.
 
-If you do not see any source code, check the `develop` [branch](https://github.com/vScripter/Chester/tree/develop)!
+A majority of the code for this project was borrowed from the [Vester][Vester] project; a huge kudos goes to the folks maintaining that project.
 
 This project is inspired by a few different projects that offer similar capabilities:
-- [VMware vCheck Report](https://github.com/alanrenouf/vCheck-vSphere)
-- [Vester](https://github.com/WahlNetwork/Vester)
-- [Watchmen](https://github.com/devblackops/watchmen)
+- [Vester][Vester]
+- [VMware vCheck Report][VMware vCheck Report]
+- [Watchmen][Watchmen]
 
 [Mind Map of module architecture][MNArchitecture]
 
+### Example Reports
 
+![](https://github.com/vScripter/Chester/blob/master/Examples/0_Index.png)
+
+[Vester]: https://github.com/WahlNetwork/Vester
+[VMware vCheck Report]: https://github.com/alanrenouf/vCheck-vSphere
+[Watchmen]: https://github.com/devblackops/watchmen
 [MNArchitecture]: https://my.mindnode.com/7vDzaHxeoqMVZ5joYrKgYc7ngvCWx2cxGpPvYMds
