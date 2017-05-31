@@ -12,7 +12,7 @@
 RootModule = 'Chester.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1.0'
+ModuleVersion = '0.2.0'
 
 # ID used to uniquely identify this module
 GUID = '79924feb-e2cb-4921-95a6-7da709d7ec5b'
