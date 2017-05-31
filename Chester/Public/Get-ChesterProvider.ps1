@@ -41,7 +41,7 @@ function Get-ChesterProvider {
                 Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Looking for Provider { $provider }"
 
                 $fetchProvider = $null
-                $fetchProvider = Get-ChildItem -Path $Path -Directory | Where-Object {$_.Name -eq $provider}
+                $fetchProvider = Get-ChildItem -Path $Path -Directory | Where-Object {$_.Name -like $provider}
 
                 if ($fetchProvider -eq $null) {
                     Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Provider { $provider } could not be found."
@@ -114,7 +114,7 @@ function Get-ChesterProvider {
                     if (Test-Path "$($provider.FullName)\Config-Spec.ps1") {
 
                         $createConfigScript = $null
-                        $createConfigScript = "$($provider.FullName)\Config-Spec.ps1"
+                        $createConfigScript = "$($provider.FullName)\Fixture.ps1"
 
                     } else {
 

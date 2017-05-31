@@ -18,21 +18,20 @@ function New-ChesterEndpoint {
     BEGIN {
 
         $endpointFullName = $null
-        $endpointFullName = $Provider + "." + $EnvironmentName
+        $endpointFullName = $Provider + "." + $EnvironmentName.ToUpper()
 
     }
 
     PROCESS {
 
         # test for .chester directory
-
         if (-not (Test-Path -Path $Path -PathType Container)) {
 
             try {
                 New-Item -ItemType Directory -Path $Path -Force -ErrorAction 'Stop' | Out-Null
             } catch {
                 throw "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Could not create .Chester directory { $Path }. $_"
-            }
+            } # end try/catch
 
         } # end if
 
