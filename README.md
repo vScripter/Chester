@@ -7,6 +7,8 @@ Lightweight, plugin-based infrastructure validation and remediation using PowerS
 
 A majority of the code for this project was borrowed from the [Vester][Vester] project; a huge kudos goes to the folks maintaining that project.
 
+__More content and detail about how to get started will be added soon!__
+
 This project is inspired by a few different projects that offer similar capabilities:
 - [Vester][Vester]
 - [VMware vCheck Report][VMware vCheck Report]
