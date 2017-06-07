@@ -130,6 +130,7 @@ function Get-ChesterProvider {
                         Scopes             = $providerScopes
                         Tests              = $providerTests
                         CreateConfigScript = $createConfigScript
+                        Path               = $provider.FullName
                     }
 
                     $providerConfiguration += $providerObj
