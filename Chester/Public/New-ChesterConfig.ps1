@@ -47,17 +47,25 @@ function New-ChesterConfig {
     "Get-Help about_Vester" for more information.
 
     .LINK
-    http://vester.readthedocs.io/en/latest/
-
-    .LINK
-    https://github.com/WahlNetwork/Vester
+    https://github.com/vscripter/chester
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'default')]
     param (
 
-
+        [parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
+        [ValidateScript({
+            $_ -match "$(((Get-ChesterProvider).Name) -join '|')"
+        })]
         [system.string]$Provider,
 
+        [parameter(Position = 1, Mandatory = $false, ValueFromPipeline = $true)]
+        [system.string]$Path,
+
+        [parameter(Position = 2, Mandatory = $false, ValueFromPipeline = $true)]
+        [ValidateScript({
+            $_ -match "$(((Get-ChesterEndpoint).Name) -join '|')"
+        })]
+        [alias('Name')]
         [system.string]$Endpoint,
 
         [switch]$Quiet
