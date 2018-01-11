@@ -118,7 +118,7 @@ function Get-ChesterProvider {
 
                     } else {
 
-                        Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Configuration Creation Script file not found for endpoint { $provider } at path { $($provider.FullName)\Config-Spec.ps1 }"
+                        Write-Warning -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Configuration Creation Script file not found for Provider { $provider } at path { $($provider.FullName)\Config-Spec.ps1 }"
 
                     } # end if/else
 
@@ -130,6 +130,7 @@ function Get-ChesterProvider {
                         Scopes             = $providerScopes
                         Tests              = $providerTests
                         CreateConfigScript = $createConfigScript
+                        Path               = $provider.FullName
                     }
 
                     $providerConfiguration += $providerObj

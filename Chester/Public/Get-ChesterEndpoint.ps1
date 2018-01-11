@@ -7,7 +7,8 @@ function Get-ChesterEndpoint {
 
 
         [Parameter(Position = 0)]
-        [System.String[]]$EndpointName,
+        [alias('EndpointName')]
+        [System.String[]]$Name,
 
 
         <# control the type of value returned; use 'Names' as the default value so that when it's
@@ -34,7 +35,7 @@ function Get-ChesterEndpoint {
 
             $epArray = @()
 
-            foreach ($endpointEntry in $EndpointName) {
+            foreach ($endpointEntry in $Name) {
 
                 Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Looking for Endpoint { $endpointEntry }"
 
@@ -74,11 +75,14 @@ function Get-ChesterEndpoint {
 
                 ForEach ($endpoint in $discoveredEndpoints) {
 
+                    $importedConfig   = $null
+                    $endpointProvider = $null
+
                     if (Test-Path "$($endpoint.FullName)\Config.json") {
 
                         # import endpoint configuration
-                        $importedConfig = $null
                         $importedConfig = Get-Content -Path (Get-Item "$($endpoint.FullName)\Config.json" -ErrorAction 'SilentlyContinue') -Raw -ErrorAction 'SilentlyContinue'| ConvertFrom-Json -ErrorAction 'SilentlyContinue'
+                        $endpointProvider = $importedConfig.provider
 
                     } else {
 
@@ -96,6 +100,8 @@ function Get-ChesterEndpoint {
                         Name               = $endpoint.Name
                         Cfg                = $importedConfig
                         Credential         = $importedAuth
+                        Provider           = $endpointProvider
+                        Path               = $endpoint.FullName
                     }
 
                     $endpointConfiguration += $endpointObj

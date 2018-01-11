@@ -73,8 +73,7 @@ function Invoke-Chester {
     .LINK
     https://github.com/WahlNetwork/Vester
     #>
-    [CmdletBinding(SupportsShouldProcess = $true,
-        ConfirmImpact = 'Medium')]
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
     # ^ that passes -WhatIf through to other tests
     param (
         <#
@@ -102,7 +101,7 @@ function Invoke-Chester {
 
         #>
         [Parameter(ValueFromPipeline = $True)]
-        $Endpoint = (Get-ChesterEndpoint -ReturnType 'Object'),
+        [object[]]$Endpoint = (Get-ChesterEndpoint -ReturnType 'Object'),
 
         # Optionally fix all config drift that is discovered
         # Defaults to false (disabled)
@@ -110,8 +109,8 @@ function Invoke-Chester {
 
         # Optionally save Pester output in NUnitXML format to a specified path
         # Specifying a path automatically triggers Pester in NUnitXML mode
-        [ValidateScript( {Test-Path $_ -PathType Container})]
-        [object]$XMLOutputPath = "$Home\.chester\_Report",
+        [ValidateScript({Test-Path $_ -PathType Container})]
+        [string]$XMLOutputPath = "$Home\.chester\_Report",
 
         [switch]$GenerateReport,
 

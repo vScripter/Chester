@@ -47,17 +47,25 @@ function New-ChesterConfig {
     "Get-Help about_Vester" for more information.
 
     .LINK
-    http://vester.readthedocs.io/en/latest/
-
-    .LINK
-    https://github.com/WahlNetwork/Vester
+    https://github.com/vscripter/chester
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'default')]
     param (
 
-
+        [parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
+        [ValidateScript({
+            $_ -match "$(((Get-ChesterProvider).Name) -join '|')"
+        })]
         [system.string]$Provider,
 
+        #[parameter(Position = 1, Mandatory = $false, ValueFromPipeline = $true)]
+        #[system.string]$Path,
+
+        [parameter(Position = 2, Mandatory = $false, ValueFromPipeline = $true)]
+        #[ValidateScript({
+        #    $_ -match "$(((Get-ChesterEndpoint).Name) -join '|')"
+        #})]
+        [alias('Name')]
         [system.string]$Endpoint,
 
         [switch]$Quiet
@@ -65,13 +73,35 @@ function New-ChesterConfig {
 
     BEGIN {
 
+        $endpointPath = $null
+        $endpointPath = Get-ChesterEndpoint -Name $Endpoint -ErrorAction SilentlyContinue
 
+        if ( -not (Test-Path $endpointPath -PathType Leaf)) {
+            throw "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Could not resolve endpoint path"
+        }
 
     } # BEGIN
 
     PROCESS{
 
+        Write-Verbose -Message "[$($PSCmdlet.MyInvocation.MyCommand.Name)] Creating configuration file for Endpoint { $Endpoint }."
+        try {
 
+            if ($Quiet) {
+
+                New-VesterConfig -OutputFolder $endpointPath -Provider $Provider -Quiet
+
+            } else {
+
+                New-VesterConfig -OutputFolder $endpointPath -Provider $Provider
+
+            } # if/else
+
+        } catch {
+
+            throw "[$($PSCmdlet.MyInvocation.MyCommand.Name)][ERROR] Error creating configuration file for Endpoint { $Endpoint }."
+
+        } # try/catch
 
     } # PROCESS
 
